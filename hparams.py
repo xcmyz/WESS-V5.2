@@ -16,7 +16,7 @@ use_lws = False
 text_cleaners = ['english_cleaners']
 
 # Train
-batch_size = 12
+batch_size = 32
 warm_up_epoch = 2
 epochs = 10000
 dataset_path = "dataset"
