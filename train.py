@@ -59,6 +59,8 @@ def main(args):
         checkpoint = torch.load(os.path.join(
             hp.warm_up_checkpoint_path, '%d.pth.tar' % args.restore_warm_up_step))
         model.load_state_dict(checkpoint['model'])
+        if not os.path.exists(hp.checkpoint_path):
+            os.mkdir(hp.checkpoint_path)
         print("---Model Restored from Warm Up---\n")
 
         # for param_group in optimizer.param_groups:
@@ -277,7 +279,7 @@ if __name__ == "__main__":
                             help="warm_up", default=False)
     else:
         parser.add_argument('--restore_warm_up_step',
-                            type=int, help='warm up', default=30)
+                            type=int, help='warm up', default=800)
         parser.add_argument('--restore_step', type=int,
                             help='checkpoint', default=0)
         parser.add_argument("--warm_up", type=bool,
