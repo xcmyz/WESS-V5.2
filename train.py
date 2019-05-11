@@ -15,6 +15,7 @@ from data_utils import WESSDataLoader, collate_fn, DataLoader
 import hparams as hp
 
 if_parallel = False
+frozen_tearch_forced = True
 
 
 def main(args):
@@ -74,8 +75,10 @@ def main(args):
     model = model.train()
 
     total_step = hp.epochs * len(training_loader)
+    current_lr = 0.0
     Time = np.array(list())
     Start = time.clock()
+
     for epoch in range(hp.epochs):
         for i, data_of_batch in enumerate(training_loader):
             start_time = time.clock()
@@ -172,13 +175,14 @@ def main(args):
                 # Backward
                 total_loss.backward()
 
-            # Clipping gradients to avoid gradient explosion
-            nn.utils.clip_grad_norm_(model.parameters(), hp.grad_clip_thresh)
+                # Clipping gradients to avoid gradient explosion
+                nn.utils.clip_grad_norm_(
+                    model.parameters(), hp.grad_clip_thresh)
 
-            # Update weights
-            optimizer.step()
+                # Update weights
+                optimizer.step()
 
-            current_lr, optimizer = step_decay(optimizer, current_epoch)
+                current_lr, optimizer = step_decay(optimizer, current_epoch)
 
             if current_step % hp.log_step == 0:
                 Now = time.clock()
@@ -261,20 +265,23 @@ def step_decay(optimizer, epoch):
 
 def get_teacher_forced(current_step):
     init_teacher_forced = hp.teacher_forced
-    tf = init_teacher_forced * \
-        (1.0 / (1 + hp.teacher_forced_delay * current_step))
+    if frozen_tearch_forced:
+        tf = 1.0
+    else:
+        tf = init_teacher_forced * \
+            (1.0 / (1 + hp.teacher_forced_delay * current_step))
 
     return tf
 
 
 if __name__ == "__main__":
     # Default Warm Up
-    warm_up = True
+    warm_up = False
     parser = argparse.ArgumentParser()
 
     if not warm_up:
         parser.add_argument('--restore_step', type=int,
-                            help='checkpoint', default=0)
+                            help='checkpoint', default=3800)
         parser.add_argument("--warm_up", type=bool,
                             help="warm_up", default=False)
     else:
