@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
     if not warm_up:
         parser.add_argument('--restore_step', type=int,
-                            help='checkpoint', default=3800)
+                            help='checkpoint', default=0)
         parser.add_argument("--warm_up", type=bool,
                             help="warm_up", default=False)
     else:
