@@ -233,6 +233,8 @@ def step_decay(optimizer, epoch):
     # s_t = time.clock()
     # print(epoch)
 
+    lr = frozen_learning_rate
+
     if frozen_learning_rate:
         for param_group in optimizer.param_groups:
             param_group['lr'] = learning_rate_frozen
