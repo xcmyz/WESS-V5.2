@@ -18,6 +18,7 @@ if_parallel = False
 frozen_tearch_forced = True
 frozen_learning_rate = True
 learning_rate_frozen = 0.2e-3
+teacher_forced_frozen = 0.93
 
 
 def main(args):
@@ -275,7 +276,7 @@ def step_decay(optimizer, epoch):
 def get_teacher_forced(current_step):
     init_teacher_forced = hp.teacher_forced
     if frozen_tearch_forced:
-        tf = 1.0
+        tf = teacher_forced_frozen
     else:
         tf = init_teacher_forced * \
             (1.0 / (1 + hp.teacher_forced_delay * current_step))
@@ -290,7 +291,7 @@ if __name__ == "__main__":
 
     if not warm_up:
         parser.add_argument('--restore_step', type=int,
-                            help='checkpoint', default=0)
+                            help='checkpoint', default=10200)
         parser.add_argument("--warm_up", type=bool,
                             help="warm_up", default=False)
     else:
