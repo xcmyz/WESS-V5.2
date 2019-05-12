@@ -16,6 +16,8 @@ import hparams as hp
 
 if_parallel = False
 frozen_tearch_forced = True
+frozen_learning_rate = True
+learning_rate_frozen = 0.2e-3
 
 
 def main(args):
@@ -191,7 +193,8 @@ def main(args):
                     epoch+1, hp.epochs, current_step, total_step, gate_loss.item(), mel_loss.item(), total_loss.item())
                 str2 = "Time Used: {:.3f}s, Estimated Time Remaining: {:.3f}s.".format(
                     (Now-Start), (total_step-current_step)*np.mean(Time))
-                str3 = "Current Learning Rate: {:.6f}".format(current_lr)
+                str3 = "Current Learning Rate: {:.6f}".format(
+                    optimizer.param_groups[0]['lr'])
                 str4 = "Current Teacher Forced: {:.6f}".format(teacher_forced)
                 str5 = str3 + "; " + str4
 
@@ -230,17 +233,21 @@ def step_decay(optimizer, epoch):
     # s_t = time.clock()
     # print(epoch)
 
-    init_lr = hp.learning_rate
-    w = math.pow(hp.lr_drop, epoch / hp.epochs_drop)
-    # print(math.pow(hp.lr_drop, math.floor((1 + epoch) / hp.epochs_drop)))
-    # print(w)
-    lr = init_lr * w
+    if frozen_learning_rate:
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = learning_rate_frozen
+    else:
+        init_lr = hp.learning_rate
+        w = math.pow(hp.lr_drop, epoch / hp.epochs_drop)
+        # print(math.pow(hp.lr_drop, math.floor((1 + epoch) / hp.epochs_drop)))
+        # print(w)
+        lr = init_lr * w
 
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
-    # e_t = time.clock()
-    # print(e_t - s_t)
+        # e_t = time.clock()
+        # print(e_t - s_t)
 
     return lr, optimizer
 
