@@ -11,10 +11,10 @@ def visualize(file_name, start, end=-1):
     with open(file_name, "r") as f_loss:
         for loss in f_loss.readlines():
             # print(loss)
-            cnt = cnt + 1
-            # print(cnt)
-            if cnt % 100 == 0:
-                print(cnt)
+            # cnt = cnt + 1
+            # # print(cnt)
+            # if cnt % 100 == 0:
+            #     print(cnt)
             loss_arr = np.append(loss_arr, float(loss))
 
     loss_arr = loss_arr[start:end]
@@ -24,7 +24,7 @@ def visualize(file_name, start, end=-1):
 
     # print("#########")
     # print(np.shape(y))
-    print(np.shape(x))
+    # print(np.shape(x))
 
     plt.plot(x, y, color="y", lw=0.7)
     plt.xlabel("sequence number")
@@ -36,4 +36,4 @@ def visualize(file_name, start, end=-1):
 
 if __name__ == "__main__":
     # Test
-    visualize("total_loss.txt", 0)
+    visualize("total_loss.txt", 5000)
